@@ -9,6 +9,13 @@ Diem is a habit tracking application with a Python backend that helps users crea
 - Choose the frequency of the habit
 - Mark the habit as completed, which timestamps the completion and records it for tracking progress
 
+### Built With
+
+* Python
+* Flask
+* SQlite3
+
+
 ## System Requirements
 
 - Python 3.8 or higher
@@ -17,19 +24,34 @@ Diem is a habit tracking application with a Python backend that helps users crea
 ## Installation
 
 1. Clone the repository
-git clone <git@github.com:SweetByte13/Diem.git>
+```console
+git clone git@github.com:<username>/Diem.git
+```
 
 2. Navigate into the cloned project directory
-cd <Diem>
+```console
+cd Diem
+```
 
 3. Install the required packages
-pip install -r requirements.txt
+```console
+pipenv install
+pipenv shell
+pip install Flask
+pip install Flask-SQLAlchemy
+pip install Flask-RESTful
+pip install Flask-Cors
+pip install ipdb
+pip install sqlalchemy-serializer
+pip install Faker
+```
 
 ## Running the Application
 
 To run Diem, use the following command:
+```console
 python app.py
-
+```
 
 ## Contributing
 
@@ -38,5 +60,4 @@ Contributions are welcome and can be made via pull requests. Please ensure that 
 ## Known Issues
 
 There are no known issues or limitations with the current version of Diem.
-
 Thank you for using Diem, your personal habit tracker. Happy habit forming!
