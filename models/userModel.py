@@ -11,12 +11,13 @@ bcrypt = Bcrypt(app)
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     
-    id=db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id=db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     username=db.Column(db.String(30), nullable=False, unique=True)
     email=db.Column(db.String, nullable=False, unique=True)
     _password_hash=db.Column(db.String, nullable=False)
     
-    user_habit = association_proxy('User_Habit', back_populate='user', cascade='all, delete-orphan')
+    user_habits = db.relationship('User_Habit', back_populates='user', cascade='all, delete-orphan')
+    habits = association_proxy('user_habits', 'habit')
     
     __table_args__ = (
         db.CheckConstraint('length(username)>5 AND length(username)>30', name='username_length'),

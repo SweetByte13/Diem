@@ -6,8 +6,8 @@ from sqlalchemy.dialects.postgresql import UUID
 class User_Habit(db.Model, SerializerMixin):
     __tablename__ = 'user_habits'
     
-    user_id=db.Column(UUID(as_uuid=True), db.ForeignKey('user.id'), default=uuid.uuid4)
-    habit_id=db.Column(UUID(as_uuid=True), db.ForeignKey('habit.id'), default=uuid.uuid4)
+    user_id=db.Column(UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, default=uuid.uuid4)
+    habit_id=db.Column(UUID(as_uuid=True), db.ForeignKey('habit.id'), nullable=False, default=uuid.uuid4)
     
-    user=db.relationship('User', back_populates='user_habit')
-    habit=db.relationship('Habit', back_populates='user_habit')
+    user=db.relationship('User', back_populates='user_habits')
+    habit=db.relationship('Habit', back_populates='user_habits')
