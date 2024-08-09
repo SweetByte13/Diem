@@ -46,6 +46,18 @@ pip install sqlalchemy-serializer
 pip install Faker
 ```
 
+## Testing
+
+test are located in the tests directory
+files must begin with 'test_'
+function must begin with 'test_'
+classes must begin with 'Test'
+
+to run use:
+```
+python -m pytest --verbose
+```
+
 ## Running the Application
 
 To run Diem, use the following command:

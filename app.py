@@ -2,7 +2,7 @@
 from flask import request, session, make_response, jsonify
 from flask_restful import Resource
 from config import app, db, api
-from controllers.user import Home 
+from controllers.home import Home 
 
 api.add_resource(Home, '/')
 
