@@ -8,8 +8,8 @@ class Habit_Value(db.Model, SerializerMixin):
     __tablename__= 'habit_values'
     
     id=db.Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid.uuid4)
-    habit_id=db.Column(UUID(as_uuid=True), ForeignKey='habit.id', default=uuid.uuid4, nullable=False)
-    value=db.Column(db.String)  
+    habit_id=db.Column(UUID(as_uuid=True), ForeignKey='habit.id', nullable=False)
+    value=db.Column(db.String, nullable=False)  
     
     habit = db.relationship('Habit', back_populates='habit_values', cascade='all, delete-orphan')
     

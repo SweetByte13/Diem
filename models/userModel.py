@@ -4,6 +4,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import validates
 from flask_bcrypt import Bcrypt
+from datetime import datetime, timezone
 from config import db, app
 import re
 bcrypt = Bcrypt(app)
@@ -14,6 +15,7 @@ class User(db.Model, SerializerMixin):
     id=db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     username=db.Column(db.String(30), nullable=False, unique=True)
     email=db.Column(db.String, nullable=False, unique=True)
+    created_dt=db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     _password_hash=db.Column(db.String, nullable=False)
     
     user_habits = db.relationship('User_Habit', back_populates='user', cascade='all, delete-orphan')
