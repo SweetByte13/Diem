@@ -1,0 +1,15 @@
+#Ignore Flask Enviorment Setup
+.env
+
+# database
+*.db
+instance
+.vscode
+Pipfile.lock
+
+# Virtual env metadata
+.venv
+
+# pytest cache
+.pytest_cache
+__pycache__
