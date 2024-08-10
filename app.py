@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import request, session, make_response, jsonify
 from flask_restful import Resource
-from config import app, api
+from config import app, api, db
 from controllers.home import Home
 from controllers.user import Users, CheckSession
 
