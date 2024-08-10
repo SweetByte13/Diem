@@ -1,4 +1,4 @@
-from config import db, app
+from config import db
 import uuid
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.dialects.postgresql import UUID
