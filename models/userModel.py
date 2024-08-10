@@ -33,7 +33,8 @@ class User(db.Model, SerializerMixin):
     @password_hash.setter
     def password_hash(self, password):
         from app import bcrypt 
-        self._password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        passHash = bcrypt.generate_password_hash(password)
+        self._password_hash = passHash.decode('utf-8')
         
     def authenticate(self, password):
         from app import bcrypt 
