@@ -15,7 +15,7 @@ class TestUsers:
     def test_sign_up(self, client):
         '''creates one user using a username, email, and password with a POST request to /signup.'''
         fake = Faker()
-        username = "TestUsername"
+        username = fake.user_name()
         email = fake.email()
         password = fake.name_nonbinary() + '!'
         response = client.post(
@@ -37,5 +37,6 @@ class TestUsers:
         assert user
         
         db.session.delete(user)
+        db.session.commit()
             
 
