@@ -3,11 +3,11 @@ from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import validates
-from flask_bcrypt import Bcrypt
 from datetime import datetime, timezone
-from config import db, app
+from config import db
 import re
-bcrypt = Bcrypt(app)
+# from app import bcrypt
+
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
@@ -22,18 +22,33 @@ class User(db.Model, SerializerMixin):
     habits = association_proxy('user_habits', 'habit')
     
     __table_args__ = (
-        db.CheckConstraint('length(username)>5 AND length(username)>30', name='username_length'),
+        db.CheckConstraint('length(username)>5 AND length(username)<30', name='username_length'),
         db.CheckConstraint("username NOT LIKE '%[^a-zA-Z0-9_]%'", name='username_no_special_chars')
     )
 
+    @property
+    def password_hash(self):
+        return self._password_hash 
+    
+    @password_hash.setter
+    def password_hash(self, password):
+        from app import bcrypt 
+        passHash = bcrypt.generate_password_hash(password)
+        self._password_hash = passHash.decode('utf-8')
+        
+    def authenticate(self, password):
+        from app import bcrypt 
+        return bcrypt.check_password_hash(self._password_hash, password)
+    
     @validates('username')
     def validates_username(self, key, new_username):
         if not new_username:
             raise AssertionError ("Username is required")
         if len(new_username)<5:
             raise AssertionError ("Username must be longer than 5 characters")
-        if User.query.filter_by(username = new_username):
+        if User.query.filter_by(username = new_username).first():
             raise AssertionError ("Username is already taken")
         if not re.match("^[a-zA-Z0-9_]+$", new_username):
             raise ValueError("Username must not contain special characters.")
         return new_username
+    

@@ -1,4 +1,4 @@
-from config import db, app
+from config import db
 import uuid
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -11,5 +11,5 @@ class Habit_Value(db.Model, SerializerMixin):
     habit_id=db.Column(UUID(as_uuid=True), db.ForeignKey('habit.id'), nullable=False,)
     value=db.Column(db.String, nullable=False)  
     
-    habit = db.relationship('Habit', back_populates='habit_values', cascade='all, delete-orphan')
-    
+    habit = db.relationship('Habit', back_populates='habit_values')
+    habit_occurances = db.relationship('Habit_Occurance', back_populates='habit_value', cascade='all, delete-orphan')

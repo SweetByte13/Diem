@@ -1,11 +1,11 @@
-from config import db, app
+from config import db
 import uuid
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
 
-class HabitOccurance(db.Model, SerializerMixin):
+class Habit_Occurance(db.Model, SerializerMixin):
     __tablename__ = 'habit_occurances'
     
     id=db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)

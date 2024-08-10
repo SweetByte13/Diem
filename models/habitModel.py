@@ -1,5 +1,5 @@
-from config import db, app
 import uuid
+from config import db
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.dialects.postgresql import UUID
@@ -15,7 +15,8 @@ class Habit(db.Model, SerializerMixin):
     recurrence_pattern=db.Column(db.String)
     created_dt=db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     
-    user_habit = db.relationship('User_Habit', back_populates='habit', cascade='all, delete-orphan')
-    habit_occurance = db.relationship('Habit_Occurance', back_populates='habit', cascade='all, delete-orphan')
-    habit_value= db.relationship('Habit_Value', back_populates='habit', cascade='all, delete-orphan')
+    user_habits = db.relationship('User_Habit', back_populates='habit', cascade='all, delete-orphan')
+    habit_occurances = db.relationship('Habit_Occurance', back_populates='habit', cascade='all, delete-orphan')
+    habit_values= db.relationship('Habit_Value', back_populates='habit', cascade='all, delete-orphan')
     user=association_proxy('user_habits', 'user')
+    habit_tracking_type=db.relationship('Habit_Tracking_Type', back_populates='habit')
