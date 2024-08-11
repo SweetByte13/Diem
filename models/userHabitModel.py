@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import UUID
 class User_Habit(db.Model, SerializerMixin):
     __tablename__ = 'user_habits'
     
-    id=db.Column(UUID(as_uuid=True), primary_key=True, nullable=False)
+    id=db.Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid.uuid4)
     user_id=db.Column(UUID(as_uuid=True), db.ForeignKey('users.id'), nullable=False)
     habit_id=db.Column(UUID(as_uuid=True), db.ForeignKey('habit.id'), nullable=False)
     
