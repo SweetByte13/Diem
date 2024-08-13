@@ -48,7 +48,7 @@ class Login(Resource):
         else:
             return make_response({"Error": "Invalid password"}, 401)
         
-class Loutout(Resource):
+class Logout(Resource):
     def delete(self):
         print("Logging user out...")
         session.pop('user_id', None)
