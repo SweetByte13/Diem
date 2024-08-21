@@ -75,3 +75,14 @@ class HabitController(Resource):
         except Exception as e:
             print(e)
             return make_response({"error": "422 unprocessable Entity", "details": str(e)}, 422)
+    
+class HabitById(Resource):
+    def patch(self, id):
+        habit = db.session.get(Habit, uuid.UUID(id))
+        if habit:
+            params = request.json
+            for attr in params:
+                setattr(habit, attr, params[attr])
+            habit.is_active = True
+            db.session.commit()
+            return make_response("Habit ID" + id + " successfully made inactive")
