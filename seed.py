@@ -12,21 +12,21 @@ def create_users():
     print("Creating Users...")
     users = []
     tina = User(
-    username = "chefmaster",
-    email = "chefmaster@example.com",
-    _password_hash = "hashed_password_1"
+        username = "chefmaster",
+        email = "chefmaster@example.com",
+        password_hash = "hashed_password_1"
     )
 
     tim = User(
         username = "bakerqueen",
         email = "bakerqueen@example.com",
-        _password_hash = "hashed_password_2"
+        password_hash = "hashed_password_2"
     )
 
     tommy = User(
         username = "pastrypro",
         email = "pastrypro@example.com",
-        _password_hash = "hashed_password_3"
+        password_hash = "hashed_password_3"
     )
     users.append(tina)
     users.append(tim)

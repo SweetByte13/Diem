@@ -4,7 +4,6 @@ from sqlalchemy.exc import IntegrityError
 from models.userModel import User
 from config import db
 
-
 class CheckSession(Resource):
     def get(self):
         if 'user_id' in session:
@@ -35,6 +34,25 @@ class SignUp(Resource):
         except IntegrityError as e:
             print(e)
             return make_response({"error": "422 unprocessable Entity", "details": str(e)}, 422)
+        
+class Login(Resource):
+    def post(self):
+        params = request.json
+        username= params.get('username')
+        user = User.query.filter(User.username == username).first()
+        if not user:
+            return make_response({"Error": "User not found"})
+        if user.authenticate(params.get('password')):
+            session['user_id'] = str(user.id)
+            return make_response(user.to_dict())
+        else:
+            return make_response({"Error": "Invalid password"}, 401)
+        
+class Logout(Resource):
+    def delete(self):
+        print("Logging user out...")
+        session.pop('user_id', None)
+        return make_response({}, 204)
 
 class Users(Resource):
     def get(self):
