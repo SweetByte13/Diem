@@ -5,6 +5,7 @@ from config import start_app
 from flask_restful import Api
 from controllers.home import Home
 from controllers.user import Users, CheckSession, SignUp, Login, Logout
+from controllers.habits import HabitController
 from flask_bcrypt import Bcrypt
 
 app = start_app()
@@ -16,6 +17,7 @@ api.add_resource(CheckSession, '/check_session')
 api.add_resource(SignUp, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Logout, '/logout')
+api.add_resource(HabitController, '/habit')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
