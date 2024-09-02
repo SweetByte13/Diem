@@ -4,7 +4,7 @@ from flask_restful import Resource
 from config import start_app
 from flask_restful import Api
 from controllers.home import Home
-from controllers.user import Users, CheckSession, SignUp, Login, Logout
+from controllers.user import Users, CheckSession, SignUp, Login, Logout, GetHabitsByUserAndDateRange
 from controllers.habits import HabitController, HabitById
 from flask_bcrypt import Bcrypt
 
@@ -19,6 +19,7 @@ api.add_resource(Login, '/login')
 api.add_resource(Logout, '/logout')
 api.add_resource(HabitController, '/habit')
 api.add_resource(HabitById, '/habits/<id>')
+api.add_resource(GetHabitsByUserAndDateRange, '/habits_by_user/<id>')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

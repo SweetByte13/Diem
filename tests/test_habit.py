@@ -83,6 +83,7 @@ class TestHabit:
         assert response.status_code != 200
  
     #test for marking habit inactive
+    #todo: need to delete habit after test
     def test_patch_route(self, client):
         '''updates a habit with a PATCH request to /habits/<id>.'''
         

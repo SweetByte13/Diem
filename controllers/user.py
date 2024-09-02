@@ -1,8 +1,10 @@
+import uuid
 from flask import request, session, make_response, jsonify
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from models.userModel import User
 from config import db
+from helpers.sync_habits import SyncHabits
 
 class CheckSession(Resource):
     def get(self):
@@ -57,3 +59,17 @@ class Logout(Resource):
 class Users(Resource):
     def get(self):
         return ("Hello World!")
+
+class GetHabitsByUserAndDateRange(Resource):
+    def get(self, id):
+        if 'user_id' in session:
+            user_id = session['user_id']
+            if user_id:
+                user = db.session.get(User, user_id)
+                SyncHabits(user)
+                if user:
+                    return make_response(user.to_dict(), 200)
+        else:
+            user = db.session.get(User, uuid.UUID(id))
+            SyncHabits(user)
+        return make_response({"error": "Unauthorized User Must Login"}, 401)
