@@ -34,7 +34,7 @@ class TestHabit:
                 'habit_values': habit_values
             }
         ).json
-
+        print(response)
         habit = Habit.query.filter(
             Habit.id == uuid.UUID(response['id'])).one_or_none()
         assert habit
@@ -82,6 +82,7 @@ class TestHabit:
         )
         assert response.status_code != 200
  
+    #test for marking habit inactive
     def test_patch_route(self, client):
         '''updates a habit with a PATCH request to /habits/<id>.'''
         
