@@ -3,7 +3,7 @@ from models.habitModel import Habit
 from dateutil import rrule, parser
 from models.habitOccuranceModel import Habit_Occurance
 from config import db
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 def SyncHabits(user: User):
     """
@@ -33,7 +33,9 @@ def SyncHabits(user: User):
     return ""
 
 def CreateHabitOccurances(habit: Habit, start_date : datetime):
-     date = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M") # + "Z"
+     tomorrow = datetime.now(timezone.utc) + timedelta(days=1)
+     tomorrow_midnight = tomorrow.replace(hour=0, minute=0, second=0, microsecond=0)
+     date = tomorrow_midnight.strftime("%Y%m%dT%H%M") #datetime.now(timezone.utc).strftime("%Y%m%dT%H%M") # + "Z"
      dates_to_add_obj = rrule.rrulestr(habit.recurrence_pattern + "UNTIL=" + date, dtstart=start_date)
      dates_to_add = list(dates_to_add_obj)
      test = ""
