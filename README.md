@@ -58,6 +58,17 @@ to run use:
 python -m pytest --verbose
 ```
 
+## Migration Issues Solutions
+If you run into an issue with multiple heads in your migrations, run the following code in the console:
+```
+flask db merge heads -m "merging two heads"
+```
+
+To ensure that the database has only one head or to see the database history, run:
+```
+flask db history
+```
+
 ## Running the Application
 
 To run Diem, use the following command:
