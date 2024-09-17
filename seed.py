@@ -7,6 +7,7 @@ from models.habitValueModel import Habit_Value
 from models.userModel import User
 from models.userHabitModel import User_Habit
 from models.habitTrackingTypeModel import Habit_Tracking_Type
+from models.habitOccuranceModel import Habit_Occurance
 import uuid
 from datetime import datetime, timedelta
 
@@ -120,6 +121,7 @@ def seed_database():
     with app.app_context():
         print("Clearing Database...")
         User_Habit.query.delete()
+        Habit_Occurance.query.delete()
         Habit_Value.query.delete()
         Habit.query.delete()
         User.query.delete()
