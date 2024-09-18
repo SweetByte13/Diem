@@ -3,7 +3,13 @@ from flask import request, session, make_response, jsonify
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from models.userModel import User
+from models.habitModel import Habit
+from models.userHabitModel import User_Habit
+from models.habitOccuranceModel import Habit_Occurance
 from config import db
+from datetime import datetime, timezone, timedelta
+from sqlalchemy import and_, or_
+from sqlalchemy.orm import joinedload
 from helpers.sync_habits import SyncHabits
 
 class CheckSession(Resource):
@@ -67,9 +73,44 @@ class GetHabitsByUserAndDateRange(Resource):
             if user_id:
                 user = db.session.get(User, user_id)
                 SyncHabits(user)
-                if user:
-                    return make_response(user.to_dict(), 200)
+                
         else:
             user = db.session.get(User, uuid.UUID(id))
             SyncHabits(user)
+
+
+        #temp data need to put this in query, will need to make midnight adjustment though
+        last_week = datetime.now(timezone.utc) - timedelta(days=7)
+        last_week_midnight = last_week.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        today = datetime.now(timezone.utc) + timedelta(days=1)
+        today_midnight = today.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        user_habits = User_Habit.query.filter(User_Habit.user_id == user.id and 
+                                         (User_Habit.habit.is_inactive == None or User_Habit.habit.is_inactive == False))
+        habits = [habit for habit in user.habits if habit.is_inactive == None or habit.is_inactive == False]
+
+        user_habits = User_Habit.query.filter(User_Habit.user_id == user.id and Habit_Occurance.due_date >= last_week_midnight and Habit_Occurance.due_date <= today_midnight and
+                                         (User_Habit.habit.is_inactive == None or User_Habit.habit.is_inactive == False))
+        
+        user_habits2 = [uh for uh in user_habits]
+
+        user_habits_test = db.session.query(User_Habit).filter(User_Habit.user_id == user.id 
+                                                               ).join(Habit, or_(Habit.is_inactive == None, Habit.is_inactive == False)
+                                                                      ).join(Habit_Occurance
+                                                                             ).filter( and_(Habit_Occurance.due_date >= last_week_midnight, Habit_Occurance.due_date <= today_midnight)
+                                                                                      ).options(joinedload(Habit_Occurance)).all()
+        user_huser_habits_test2 = [uh for uh in user_habits_test]
+
+        user_habits3 = db.session.query(User_Habit).filter(User_Habit.user_id == user.id 
+                                         ).join(Habit, and_(Habit.id == User_Habit.id)#, or_(Habit.is_inactive == None, Habit.is_inactive == False))
+                                                ).all()#.join(Habit_Occurance, and_(Habit_Occurance.habit_id == Habit.id, Habit_Occurance.due_date >= last_week_midnight, Habit_Occurance.due_date <= today_midnight))
+        
+        user_habits4 = [uh for uh in user_habits3]
+        
+        habits = [habit for habit in user.habits.filter(Habit_Occurance.due_date >= last_week_midnight and Habit_Occurance.due_date >= today_midnight
+                                                        and (Habit.is_inactive == None or Habit.is_inactive == False))]
+        
+        if user:
+            return make_response(user.to_dict(), 200)
         return make_response({"error": "Unauthorized User Must Login"}, 401)
