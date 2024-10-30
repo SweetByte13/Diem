@@ -8,12 +8,13 @@ Diem is a habit tracking application with a Python backend that helps users crea
 - Add or remove habits
 - Choose the frequency of the habit
 - Mark the habit as completed, which timestamps the completion and records it for tracking progress
+- View habit streaks and analytics
 
 ### Built With
 
 * Python
 * Flask
-* SQlite3
+* SQlite3 / PostgreSQL
 
 
 ## System Requirements
