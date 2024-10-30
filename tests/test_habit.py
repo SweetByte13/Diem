@@ -83,7 +83,6 @@ class TestHabit:
         assert response.status_code != 200
  
     #test for marking habit inactive
-    #todo: need to delete habit after test
     def test_patch_route(self, client):
         '''updates a habit with a PATCH request to /habits/<id>.'''
         
@@ -122,3 +121,8 @@ class TestHabit:
         updated_habit = Habit.query.get(habit.id)
         assert updated_habit.name == "Updated Habit"
         assert updated_habit.is_inactive
+
+        db.session.delete(habit)
+        db.session.commit()
+
+
