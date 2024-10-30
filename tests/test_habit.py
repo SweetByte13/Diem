@@ -121,3 +121,8 @@ class TestHabit:
         updated_habit = Habit.query.get(habit.id)
         assert updated_habit.name == "Updated Habit"
         assert updated_habit.is_inactive
+
+        db.session.delete(habit)
+        db.session.commit()
+
+
