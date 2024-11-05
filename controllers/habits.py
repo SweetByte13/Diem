@@ -7,9 +7,11 @@ from config import db
 from dateutil import rrule
 from sqlalchemy.exc import IntegrityError
 from models.habitModel import Habit
+from models.habitOccuranceModel import Habit_Occurance
 from models.habitValueModel import Habit_Value
 from models.userModel import User
 from models.userHabitModel import User_Habit
+from datetime import datetime, timezone
 
 # Supported iCalendar RRULE options
 # freq = "DAILY", "WEEKLY", "MONTHLY"
@@ -87,3 +89,26 @@ class HabitById(Resource):
             habit.is_active = True
             db.session.commit()
             return make_response("Habit ID" + id + " successfully made inactive")
+        
+
+class MarkHabitOccuranceComplete(Resource):
+    def patch(self, id):
+        habit_occurance = db.session.get(Habit_Occurance, uuid.UUID(id))
+        if habit_occurance:
+            habit_occurance.dt_completed = datetime.now(timezone.utc)
+            habit_occurance.is_complete = True
+            db.session.commit()
+            return make_response("Habit Occurance: " + id + " successfully marked complete.", 200)
+        else:
+            return make_response({"error": "404 could not find habit occurance with id: " + id }, 404)
+        
+class MarkHabitOccuranceIncomplete(Resource):
+    def patch(self, id):
+        habit_occurance = db.session.get(Habit_Occurance, uuid.UUID(id))
+        if habit_occurance:
+            habit_occurance.dt_completed = None
+            habit_occurance.is_complete = False
+            db.session.commit()
+            return make_response("Habit Occurance: " + id + " successfully marked incomplete.", 200)
+        else:
+            return make_response({"error": "404 could not find habit occurance with id: " + id }, 404)

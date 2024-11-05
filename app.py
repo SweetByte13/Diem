@@ -5,7 +5,7 @@ from config import start_app
 from flask_restful import Api
 from controllers.home import Home
 from controllers.user import Users, CheckSession, SignUp, Login, Logout, GetHabitsByUserAndDateRange
-from controllers.habits import HabitController, HabitById
+from controllers.habits import HabitController, HabitById, MarkHabitOccuranceComplete, MarkHabitOccuranceIncomplete
 from flask_bcrypt import Bcrypt
 
 app = start_app()
@@ -20,6 +20,8 @@ api.add_resource(Logout, '/logout')
 api.add_resource(HabitController, '/habit')
 api.add_resource(HabitById, '/habits/<id>')
 api.add_resource(GetHabitsByUserAndDateRange, '/habits_by_user/<id>')
+api.add_resource(MarkHabitOccuranceComplete, '/mark_habit_occurance_complete/<id>')
+api.add_resource(MarkHabitOccuranceIncomplete, '/mark_habit_occurance_incomplete/<id>')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
