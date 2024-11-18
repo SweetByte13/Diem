@@ -14,13 +14,25 @@ from helpers.sync_habits import SyncHabits
 
 class CheckSession(Resource):
     def get(self):
-        if 'user_id' in session:
-            user_id = session['user_id']
-            if user_id:
-                user = db.session.get(User, user_id)
+        user_id = session.get('user_id')
+        
+        if user_id:
+            try:
+                # Convert user_id to UUID if necessary
+                user_uuid = uuid.UUID(user_id)
+                user = User.query.get(user_uuid)
+                
                 if user:
-                    return make_response(user.to_dict(), 200)
-        return make_response({"error": "Unauthorized User Must Login"}, 401)
+                    return make_response({"user": user.to_dict()}, 200)
+                else:
+                    return make_response({"error": "User not found"}, 404)
+            except ValueError:
+                # Handle cases where user_id is not a valid UUID
+                return make_response({"error": "Invalid user ID"}, 400)
+        else:
+            return make_response({"error": "Not authenticated"}, 401)
+
+
 
 class SignUp(Resource):
     def post(self):
@@ -42,25 +54,34 @@ class SignUp(Resource):
         except IntegrityError as e:
             print(e)
             return make_response({"error": "422 unprocessable Entity", "details": str(e)}, 422)
-        
+
 class Login(Resource):
     def post(self):
         params = request.json
-        username= params.get('username')
-        user = User.query.filter(User.username == username).first()
+        username = params.get('username')
+        password = params.get('password')
+
+        user = User.query.filter_by(username=username).first()
         if not user:
-            return make_response({"Error": "User not found"})
-        if user.authenticate(params.get('password')):
+            return make_response({"Error": "User not found"}, 404)
+
+        if user.authenticate(password):
             session['user_id'] = str(user.id)
-            return make_response(user.to_dict())
+            return make_response(user.to_dict(), 200)
         else:
             return make_response({"Error": "Invalid password"}, 401)
-        
+
+
 class Logout(Resource):
     def delete(self):
-        print("Logging user out...")
-        session.pop('user_id', None)
+        user_id = session.get('user_id')
+        if user_id:
+            print(f"Logging out user with ID: {user_id}")
+            session.pop('user_id', None)
+        else:
+            print("No user_id found in session.")
         return make_response({}, 204)
+
 
 class Users(Resource):
     def get(self):
