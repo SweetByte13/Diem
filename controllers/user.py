@@ -20,7 +20,7 @@ class CheckSession(Resource):
             try:
                 # Convert user_id to UUID if necessary
                 user_uuid = uuid.UUID(user_id)
-                user = User.query.get(user_uuid)
+                user = db.session.get(User, user_uuid)
                 
                 if user:
                     return make_response({"user": user.to_dict()}, 200)
