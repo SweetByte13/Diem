@@ -23,7 +23,7 @@ class CheckSession(Resource):
                 user = db.session.get(User, user_uuid)
                 
                 if user:
-                    return make_response({"user": user.to_dict()}, 200)
+                    return make_response({"user": user.to_dict(only=("id", "username", "email"))}, 200)
                 else:
                     return make_response({"error": "User not found"}, 404)
             except ValueError:
@@ -50,7 +50,8 @@ class SignUp(Resource):
             db.session.add(user)
             db.session.commit()
             session['user_id'] = user.id
-            return make_response(user.to_dict(), 201)
+            print(user)
+            return make_response(user.to_dict(only=("id", "username", "email")), 201)
         except IntegrityError as e:
             print(e)
             return make_response({"error": "422 unprocessable Entity", "details": str(e)}, 422)
@@ -67,7 +68,7 @@ class Login(Resource):
 
         if user.authenticate(password):
             session['user_id'] = str(user.id)
-            return make_response(user.to_dict(), 200)
+            return make_response(user.to_dict(only=("id", "username", "email")), 200)
         else:
             return make_response({"Error": "Invalid password"}, 401)
 
