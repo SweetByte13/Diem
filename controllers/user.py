@@ -40,6 +40,7 @@ class SignUp(Resource):
         username = params.get('username')
         email = params.get('email')
         password = params.get('password')
+        print(params)
         
         user = User(
             username=username,
@@ -50,8 +51,8 @@ class SignUp(Resource):
             db.session.add(user)
             db.session.commit()
             session['user_id'] = user.id
-            print(user)
-            return make_response(user.to_dict(only=("id", "username", "email")), 201)
+            print(user.created_dt)
+            return make_response(user.to_dict(only=("id", "username", "email", "created_dt")), 201)
         except IntegrityError as e:
             print(e)
             return make_response({"error": "422 unprocessable Entity", "details": str(e)}, 422)

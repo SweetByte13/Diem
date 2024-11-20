@@ -78,7 +78,7 @@ class HabitController(Resource):
             print(e)
             return make_response({"error": "422 unprocessable Entity", "details": str(e)}, 422)
     
-#marks habit as inactive controller
+#marks habit as active/inactive controller
 class HabitById(Resource):
     def patch(self, id):
         habit = db.session.get(Habit, uuid.UUID(id))
@@ -86,9 +86,25 @@ class HabitById(Resource):
             params = request.json
             for attr in params:
                 setattr(habit, attr, params[attr])
-            habit.is_active = True
+            # habit.is_inactive = not habit.is_inactive
             db.session.commit()
-            return make_response("Habit ID" + id + " successfully made inactive")
+            response_message = (
+                f"Habit ID {id} successfully made {'active' if habit.is_inactive else 'inactive'}."
+            )
+            return make_response(response_message, 200)
+        else:
+            return make_response({"error": f"Could not find habit with ID: {id}"}, 404)
+
+    #hard delete  
+    # def delete():
+    #     habit = db.session.get(Habit, uuid.UUID(id))
+    #     if habit:
+    #             params = request.json
+    #             for attr in params:
+    #                 setattr(habit, attr, params[attr])
+    #             habit.is_active = False
+    #             db.session.commit()
+    #             return make_response("Habit ID" + id + " successfully made inactive")
         
 
 class MarkHabitOccuranceComplete(Resource):
