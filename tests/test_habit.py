@@ -9,6 +9,7 @@ from models.userHabitModel import User_Habit
 from models.userModel import User
 from models.habitValueModel import Habit_Value
 from datetime import datetime, timedelta, timezone
+from controllers.habits import HabitById
 
 @pytest.fixture
 def client():
@@ -217,4 +218,60 @@ class TestHabit:
         db.session.delete(habit)
         db.session.commit()
 
+def test_delete_habit(client):
+    '''Deletes a habit and its dependencies with a DELETE request to /habit/<id>.'''
 
+    # Create a habit with dependencies
+    name = "test habit2"
+    color = "#32a851"
+    habit_tracking_type_id = "5288ff16dde74f5baa77c0c710897d28"
+    recurrence_pattern = "FREQ=Weekly;BYDAY=Tu,Th,Sa;"
+    habit_values = ["Walking", "Lifting"]
+
+    user = User.query.first()
+    response = client.post(
+        '/habit',
+        json={
+            'name': name,
+            'color': color,
+            'habit_tracking_type_id': habit_tracking_type_id,
+            'recurrence_pattern': recurrence_pattern,
+            'user_id': user.id,
+            'habit_values': habit_values
+        }
+    )
+    print(f"POST response status: {response.status_code}")
+    print(f"POST response data: {response.json}")
+
+    # Ensure the habit was created successfully
+    assert response.status_code == 201, f"Expected status code 201, got {response.status_code}"
+    habit_response = response.json
+    created_habit_id = habit_response['id']
+    assert created_habit_id, "No ID returned for the created habit"
+
+    # Retrieve the habit from the database
+    habit = Habit.query.filter(Habit.id == uuid.UUID(created_habit_id)).one_or_none()
+    assert habit, f"Habit with ID {created_habit_id} was not found in the database"
+
+  # Verify habit and dependencies are added 
+    print("Verifying habit and dependencies...") 
+    habit_values_in_db = db.session.query(Habit_Value).filter(Habit_Value.habit_id == habit.id).all() 
+    print(f"Habit Values in DB: {habit_values_in_db}") 
+    assert db.session.query(Habit).filter(Habit.id == habit.id).one_or_none() is not None 
+    assert len(habit_values_in_db) == len(habit_values), f"Expected {len(habit_values)} habit values, found {len(habit_values_in_db)}" 
+    assert db.session.query(User_Habit).filter(User_Habit.habit_id == habit.id).one_or_none() is not None
+    
+    # Delete the habit using the delete method from HabitById class
+    habit_by_id = HabitById()
+    habit_by_id.delete(habit.id)
+
+    # Verify habit and dependencies are deleted
+    assert db.session.query(Habit).filter(Habit.id == habit.id).one_or_none() is None
+    assert db.session.query(Habit_Value).filter(Habit_Value.habit_id == habit.id).one_or_none() is None
+    assert db.session.query(User_Habit).filter(User_Habit.habit_id == habit.id).one_or_none() is None
+
+    # Cleanup: Ensure no leftover data
+    db.session.query(Habit_Value).filter(Habit_Value.habit_id == habit.id).delete()
+    db.session.query(User_Habit).filter(User_Habit.habit_id == habit.id).delete()
+    db.session.query(Habit).filter(Habit.id == habit.id).delete()
+    db.session.commit()

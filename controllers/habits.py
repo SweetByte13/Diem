@@ -96,16 +96,21 @@ class HabitById(Resource):
             return make_response({"error": f"Could not find habit with ID: {id}"}, 404)
 
     #hard delete  
-    # def delete():
-    #     habit = db.session.get(Habit, uuid.UUID(id))
-    #     if habit:
-    #             params = request.json
-    #             for attr in params:
-    #                 setattr(habit, attr, params[attr])
-    #             habit.is_active = False
-    #             db.session.commit()
-    #             return make_response("Habit ID" + id + " successfully made inactive")
-        
+    def delete(self,id):
+            try: 
+                habit_id = uuid.UUID(id) # Convert the id to a UUID object 
+                habit = db.session.get(Habit, habit_id)
+                if habit: 
+                    db.session.delete(habit) 
+                    db.session.commit() 
+                    print(f"Habit with ID {habit.id} and its dependencies successfully deleted.") 
+                else: print(f"No habit found with ID {id}.") 
+            except Exception as e: 
+                db.session.rollback() 
+                print(f"An error occurred: {e}") 
+            finally: 
+                db.session.close()
+
 
 class MarkHabitOccuranceComplete(Resource):
     def patch(self, id):
