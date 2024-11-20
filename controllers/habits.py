@@ -97,9 +97,9 @@ class HabitById(Resource):
 
     #hard delete  
     def delete(self,id):
-            habit = db.session.get(Habit, id)
             try: 
-                habit = db.session.get(Habit, id)
+                habit_id = uuid.UUID(id) # Convert the id to a UUID object 
+                habit = db.session.get(Habit, habit_id)
                 if habit: 
                     db.session.delete(habit) 
                     db.session.commit() 
